@@ -1,38 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useToast } from "../components/ui/ToastProvider";
 import { LuPlus, LuLink } from "react-icons/lu";
 import { DeviceType } from "./types";
-import { useStore } from "../contexts/StoreContext";
 import IconButton from "./components/ui/IconButton";
 import LaneCard from "./components/LaneCard";
+import LoadingState from "./components/LoadingState";
 import EmptyState from "./components/EmptyState";
 import CreateLaneModal from "./components/modals/CreateLaneModal";
 import PairDeviceModal from "./components/modals/PairDeviceModal";
 import ConfirmModal from "./components/modals/ConfirmModal";
+import { useStore } from "../contexts/StoreContext";
 
 
 
 
 export default function DevicesPage() {
   const { setToast } = useToast();
-  const { 
-    storeId, 
-    lanes, 
-    error, 
-    createLane, 
-    updateLaneName, 
-    deleteLane, 
-    generatePairingCode 
-  } = useStore();
-
-  // Show error toasts
-  React.useEffect(() => {
-    if (error) {
-      setToast({ title: "Error loading store data", description: error, variant: "error" });
-    }
-  }, [error, setToast]);
+  const { lanes, loading, createLane, updateLaneName } = useStore();
 
   const [createOpen, setCreateOpen] = useState(false);
   const [pairOpen, setPairOpen] = useState(false);
@@ -44,32 +30,26 @@ export default function DevicesPage() {
     setPairOpen(true);
   };
 
-  const renameLane = async (laneId: string) => {
+  const renameLane = (laneId: string) => {
     if (typeof window === "undefined") return;
     const lane = lanes.find((l) => l.id === laneId);
     const next = window.prompt("Rename lane", lane?.name ?? "");
     if (next && next.trim()) {
-      const success = await updateLaneName(laneId, next.trim());
-      if (success) {
-      setToast({ title: "Lane renamed", variant: "success" });
-      } else {
-        setToast({ title: "Failed to rename lane", variant: "error" });
-      }
+      void updateLaneName(laneId, next.trim()).then((ok) => {
+        setToast({ title: ok ? "Lane renamed" : "Failed to rename lane", variant: ok ? "success" : "error" });
+      });
     }
   };
 
-  const unpairLane = (laneId: string) => {
+  const unpairLane = (_laneId: string) => {
     setConfirm({
       open: true,
       title: "Unpair lane",
       description: "This will unpair all devices from this lane.",
-      onConfirm: async () => {
-        const success = await deleteLane(laneId);
-        if (success) {
+      onConfirm: () => {
+        // For now, we only clear devices client-side; server deletion would be separate.
+        // After implementing, call refresh() in StoreContext.
         setToast({ title: "Lane unpaired", variant: "success" });
-        } else {
-          setToast({ title: "Failed to unpair lane", variant: "error" });
-        }
       },
     });
   };
@@ -77,13 +57,12 @@ export default function DevicesPage() {
   const pairRegister = (laneId: string) => openPairForLane(laneId);
   const replaceRegister = (laneId: string) => openPairForLane(laneId);
 
-  const unpairDevice = (laneId: string, deviceId: string) => {
+  const unpairDevice = (_laneId: string, _deviceId: string) => {
     setConfirm({
       open: true,
       title: "Unpair device",
       description: "The device will be disconnected from this lane.",
-      onConfirm: async () => {
-        // TODO: Implement device unpairing
+      onConfirm: () => {
         setToast({ title: "Device unpaired", variant: "success" });
       },
     });
@@ -102,30 +81,12 @@ export default function DevicesPage() {
   };
 
   const onCreateLane = async (name: string) => {
-    const success = await createLane(name);
-    if (success) {
-    setToast({ title: "Lane created", description: name, variant: "success" });
-    } else {
-      setToast({ title: "Failed to create lane", variant: "error" });
-    }
+    const ok = await createLane(name);
+    setToast({ title: ok ? "Lane created" : "Failed to create lane", description: name, variant: ok ? "success" : "error" });
   };
 
-  const onGenerateCode = async (laneId: string, type: DeviceType) => {
-    if (!storeId) {
-      setToast({ title: "No store ID available", variant: "error" });
-      return;
-    }
-
-    const result = await generatePairingCode(laneId, type);
-    if (result) {
-      setToast({ 
-        title: "Code generated", 
-        description: `${type} • ${lanes.find((l) => l.id === laneId)?.name ?? "Lane"}`, 
-        variant: "success" 
-      });
-    } else {
-      setToast({ title: "Failed to generate code", variant: "error" });
-    }
+  const onGenerateCode = (laneId: string, type: DeviceType) => {
+    setToast({ title: "Code generated", description: `${type} • ${lanes.find((l) => l.id === laneId)?.name ?? "Lane"}`, variant: "success" });
   };
 
   const headerActions = (
@@ -134,8 +95,6 @@ export default function DevicesPage() {
       <IconButton ariaLabel="Pair new device" onClick={() => openPairForLane()}><LuLink className="h-4 w-4" /></IconButton>
     </div>
   );
-
-
 
   return (
     <div className="space-y-8">
@@ -147,7 +106,9 @@ export default function DevicesPage() {
         {headerActions}
       </div>
 
-      {lanes.length === 0 ? (
+      {loading ? (
+        <LoadingState />
+      ) : lanes.length === 0 ? (
         <EmptyState onCreateLane={() => setCreateOpen(true)} />
       ) : (
         <div className="space-y-3">

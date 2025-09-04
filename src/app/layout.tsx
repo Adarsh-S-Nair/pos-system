@@ -5,7 +5,6 @@ import "./colors.css";
 import RouteTransition from "./RouteTransition";
 import ToastProvider from "./components/ui/ToastProvider";
 import { StoreProvider } from "./contexts/StoreContext";
-import AppLoader from "./components/AppLoader";
 
 const geistSans = Manrope({
   variable: "--font-geist-sans",
@@ -31,13 +30,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--color-bg)] text-[var(--color-fg)]`}>
-        <StoreProvider>
-          <AppLoader>
-            <ToastProvider>
-              <RouteTransition>{children}</RouteTransition>
-            </ToastProvider>
-          </AppLoader>
-        </StoreProvider>
+        <ToastProvider>
+          <StoreProvider>
+            <RouteTransition>{children}</RouteTransition>
+          </StoreProvider>
+        </ToastProvider>
       </body>
     </html>
   );

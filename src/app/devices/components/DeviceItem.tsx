@@ -11,9 +11,9 @@ interface DeviceItemProps {
 }
 
 export default function DeviceItem({ device, onReplace, onUnpair }: DeviceItemProps) {
-  const icon = device.type === "REGISTER" 
+  const icon = device.type === "Register" 
     ? <LuMonitor className="h-4 w-4" /> 
-    : device.type === "TERMINAL" 
+    : device.type === "Terminal" 
     ? <LuCreditCard className="h-4 w-4" /> 
     : <LuMonitor className="h-4 w-4" />;
   

@@ -4,6 +4,7 @@ import Button from "../../../components/ui/Button";
 import { Select } from "../../../components/ui/Select";
 import { LuCopy, LuQrCode } from "react-icons/lu";
 import { DeviceType, Lane } from "../../types";
+import { useStore } from "../../../contexts/StoreContext";
 
 interface PairDeviceModalProps {
   open: boolean;
@@ -20,8 +21,9 @@ export default function PairDeviceModal({
   defaultLaneId,
   onGenerate,
 }: PairDeviceModalProps) {
+  const { savePairingCode } = useStore();
   const [laneId, setLaneId] = useState<string>(defaultLaneId ?? (lanes[0]?.id ?? ""));
-  const [type, setType] = useState<DeviceType>("REGISTER");
+  const [type, setType] = useState<DeviceType>("Register");
   const [code, setCode] = useState<string | null>(null);
   const [remaining, setRemaining] = useState<number>(300);
   const [copied, setCopied] = useState<boolean>(false);
@@ -29,7 +31,7 @@ export default function PairDeviceModal({
   useEffect(() => { 
     if (!open) { 
       setLaneId(defaultLaneId ?? (lanes[0]?.id ?? "")); 
-      setType("REGISTER"); 
+      setType("Register"); 
       setCode(null); 
       setRemaining(300); 
     } 
@@ -64,9 +66,10 @@ export default function PairDeviceModal({
           <>
             <Button variant="ghost" onClick={onClose}>Cancel</Button>
             <Button 
-              onClick={() => { 
+              onClick={async () => { 
                 const c = Math.random().toString(36).slice(2, 8).toUpperCase(); 
-                setCode(c); 
+                setCode(c);
+                void savePairingCode(laneId, c);
                 onGenerate(laneId, type); 
               }}
             >
@@ -99,22 +102,18 @@ export default function PairDeviceModal({
           <div className="space-y-2">
             <div className="text-sm">Device type</div>
             <div className="inline-flex overflow-hidden rounded-md border border-[var(--color-border)]">
-              {[
-                { value: "REGISTER" as DeviceType, label: "Register" },
-                { value: "TERMINAL" as DeviceType, label: "Terminal" },
-                { value: "CUSTOMER_DISPLAY" as DeviceType, label: "Display" }
-              ].map((opt) => (
+              {["Register","Terminal","Display"].map((opt) => (
                 <button
-                  key={opt.value}
+                  key={opt}
                   type="button"
-                  onClick={() => setType(opt.value)}
+                  onClick={() => setType(opt as DeviceType)}
                   className={`px-3 py-1.5 text-sm ${
-                    type===opt.value
+                    type===opt
                       ?"bg-[color-mix(in_oklab,var(--color-fg),transparent_94%)]"
                       :"hover:bg-[color-mix(in_oklab,var(--color-fg),transparent_96%)]"
                   }`}
                 >
-                  {opt.label}
+                  {opt}
                 </button>
               ))}
             </div>
