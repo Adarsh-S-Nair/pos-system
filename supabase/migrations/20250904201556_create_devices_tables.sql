@@ -86,7 +86,7 @@ CREATE POLICY "Users can view lanes for their store" ON lanes
     FOR SELECT USING (
         store_id IN (
             SELECT id FROM business_profiles 
-            WHERE user_id = auth.uid()
+            WHERE owner_id = auth.uid()
         )
     );
 
@@ -94,7 +94,7 @@ CREATE POLICY "Users can insert lanes for their store" ON lanes
     FOR INSERT WITH CHECK (
         store_id IN (
             SELECT id FROM business_profiles 
-            WHERE user_id = auth.uid()
+            WHERE owner_id = auth.uid()
         )
     );
 
@@ -102,7 +102,7 @@ CREATE POLICY "Users can update lanes for their store" ON lanes
     FOR UPDATE USING (
         store_id IN (
             SELECT id FROM business_profiles 
-            WHERE user_id = auth.uid()
+            WHERE owner_id = auth.uid()
         )
     );
 
@@ -110,7 +110,7 @@ CREATE POLICY "Users can delete lanes for their store" ON lanes
     FOR DELETE USING (
         store_id IN (
             SELECT id FROM business_profiles 
-            WHERE user_id = auth.uid()
+            WHERE owner_id = auth.uid()
         )
     );
 
@@ -119,7 +119,7 @@ CREATE POLICY "Users can view devices for their store" ON devices
     FOR SELECT USING (
         store_id IN (
             SELECT id FROM business_profiles 
-            WHERE user_id = auth.uid()
+            WHERE owner_id = auth.uid()
         )
     );
 
@@ -127,7 +127,7 @@ CREATE POLICY "Users can insert devices for their store" ON devices
     FOR INSERT WITH CHECK (
         store_id IN (
             SELECT id FROM business_profiles 
-            WHERE user_id = auth.uid()
+            WHERE owner_id = auth.uid()
         )
     );
 
@@ -135,7 +135,7 @@ CREATE POLICY "Users can update devices for their store" ON devices
     FOR UPDATE USING (
         store_id IN (
             SELECT id FROM business_profiles 
-            WHERE user_id = auth.uid()
+            WHERE owner_id = auth.uid()
         )
     );
 
@@ -143,7 +143,7 @@ CREATE POLICY "Users can delete devices for their store" ON devices
     FOR DELETE USING (
         store_id IN (
             SELECT id FROM business_profiles 
-            WHERE user_id = auth.uid()
+            WHERE owner_id = auth.uid()
         )
     );
 
@@ -152,7 +152,7 @@ CREATE POLICY "Users can view pairing codes for their store" ON pairing_codes
     FOR SELECT USING (
         store_id IN (
             SELECT id FROM business_profiles 
-            WHERE user_id = auth.uid()
+            WHERE owner_id = auth.uid()
         )
     );
 
@@ -160,7 +160,7 @@ CREATE POLICY "Users can insert pairing codes for their store" ON pairing_codes
     FOR INSERT WITH CHECK (
         store_id IN (
             SELECT id FROM business_profiles 
-            WHERE user_id = auth.uid()
+            WHERE owner_id = auth.uid()
         )
     );
 
@@ -168,7 +168,7 @@ CREATE POLICY "Users can update pairing codes for their store" ON pairing_codes
     FOR UPDATE USING (
         store_id IN (
             SELECT id FROM business_profiles 
-            WHERE user_id = auth.uid()
+            WHERE owner_id = auth.uid()
         )
     );
 

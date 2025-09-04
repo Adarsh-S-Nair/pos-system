@@ -61,7 +61,7 @@ export default function StoreSetupPage() {
       if ((data?.length ?? 0) > 0) router.replace("/dashboard");
     };
     void run();
-  }, [router, supabase]);
+  }, [router]);
 
   const focusFirst = (container: HTMLDivElement | null) => {
     container?.querySelector<HTMLInputElement | HTMLSelectElement>("input,select")?.focus();
@@ -97,7 +97,7 @@ export default function StoreSetupPage() {
 
   const canContinue = useMemo(() => validateStep() === null, [validateStep]);
 
-  const onContinue = async () => {
+  const onContinue = useCallback(async () => {
     const err = validateStep();
     if (err) {
       setError(err);
@@ -125,10 +125,10 @@ export default function StoreSetupPage() {
       setLocalJSON(DRAFT_KEY, null as unknown as string); // clear draft
       router.replace("/dashboard");
     }
-  };
+  }, [validateStep, draft.step, draft.basics, router]);
 
-  const onBack = () => setDraft((d) => ({ ...d, step: Math.max(0, d.step - 1) }));
-  const onCancel = () => router.replace("/dashboard");
+  const onBack = useCallback(() => setDraft((d) => ({ ...d, step: Math.max(0, d.step - 1) })), []);
+  const onCancel = useCallback(() => router.replace("/dashboard"), [router]);
 
   // Keyboard shortcuts
   useEffect(() => {

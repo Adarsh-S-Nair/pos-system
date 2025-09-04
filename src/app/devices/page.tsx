@@ -205,14 +205,14 @@ function PairDeviceModal({
   const [copied, setCopied] = useState<boolean>(false);
   useEffect(() => { if (!open) { setLaneId(defaultLaneId ?? (lanes[0]?.id ?? "")); setType("Register"); setCode(null); setRemaining(300); } }, [open, lanes, defaultLaneId]);
   useEffect(() => {
-    if (!code) return;
+    if (!code || typeof window === "undefined") return;
     const id = window.setInterval(() => setRemaining((s) => (s > 0 ? s - 1 : 0)), 1000);
     return () => window.clearInterval(id);
   }, [code]);
   const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
   const ss = String(remaining % 60).padStart(2, "0");
   const doCopy = async () => {
-    if (!code) return;
+    if (!code || typeof window === "undefined") return;
     try { await navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 1200); } catch {}
   };
 
@@ -301,6 +301,7 @@ export default function DevicesPage() {
 
   // Mock initial data
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const timeout = window.setTimeout(() => {
       setLanes([
         {
