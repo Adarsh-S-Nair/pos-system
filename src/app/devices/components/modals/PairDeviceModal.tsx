@@ -25,7 +25,7 @@ export default function PairDeviceModal({
   const [laneId, setLaneId] = useState<string>(defaultLaneId ?? (lanes[0]?.id ?? ""));
   const [type, setType] = useState<DeviceType>("Register");
   const [code, setCode] = useState<string | null>(null);
-  const [remaining, setRemaining] = useState<number>(300);
+  const [remaining, setRemaining] = useState<number>(60);
   const [copied, setCopied] = useState<boolean>(false);
   
   useEffect(() => { 
@@ -33,7 +33,7 @@ export default function PairDeviceModal({
       setLaneId(defaultLaneId ?? (lanes[0]?.id ?? "")); 
       setType("Register"); 
       setCode(null); 
-      setRemaining(300); 
+      setRemaining(60); 
     } 
   }, [open, lanes, defaultLaneId]);
   
@@ -80,7 +80,10 @@ export default function PairDeviceModal({
           <>
             <Button 
               variant="secondary" 
-              onClick={() => setCode(Math.random().toString(36).slice(2, 8).toUpperCase())}
+              onClick={() => { 
+                setCode(Math.random().toString(36).slice(2, 8).toUpperCase());
+                setRemaining(60);
+              }}
             >
               Regenerate
             </Button>

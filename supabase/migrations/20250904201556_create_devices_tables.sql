@@ -177,7 +177,7 @@ CREATE OR REPLACE FUNCTION cleanup_expired_pairing_codes()
 RETURNS void AS $$
 BEGIN
     DELETE FROM pairing_codes 
-    WHERE expires_at < NOW() - INTERVAL '1 hour';
+    WHERE expires_at < NOW() - INTERVAL '5 minutes';
 END;
 $$ LANGUAGE plpgsql;
 

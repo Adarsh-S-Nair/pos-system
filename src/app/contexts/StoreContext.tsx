@@ -160,7 +160,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     const { data: userRes } = await supabase.auth.getUser();
     const userId = userRes?.user?.id;
     if (!userId) return false;
-    const expires = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+    const expires = new Date(Date.now() + 60 * 1000).toISOString();
     const { error } = await supabase.from("pairing_codes").insert([
       { code, store_id: storeId, lane_id: laneId, generated_by_user_id: userId, expires_at: expires },
     ]);
