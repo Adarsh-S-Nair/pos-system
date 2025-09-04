@@ -25,10 +25,11 @@ export default function RouteTransition({ children }: { children: React.ReactNod
   return (
     <motion.div
       key={pathname}
-      initial={first.current ? false : { x: 28 * dir.current }}
+      initial={first.current ? false : { x: 64 * dir.current }}
       animate={{ x: 0 }}
-      transition={{ duration: 0.18, ease: "easeOut" }}
-      style={{ minHeight: "100vh", overflow: "hidden" }}
+      transition={{ type: "spring", stiffness: 560, damping: 40, mass: 0.6 }}
+      className="route-transition"
+      suppressHydrationWarning
     >
       {children}
     </motion.div>

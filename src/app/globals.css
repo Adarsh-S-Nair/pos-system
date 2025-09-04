@@ -4,3 +4,21 @@
   0% { opacity: 0; transform: translateY(12px); }
   100% { opacity: 1; transform: translateY(0); }
 }
+
+/* Prevent scrollbar flicker during route transitions */
+html {
+  overflow-x: hidden;
+  scrollbar-gutter: stable both-edges;
+}
+
+body {
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Ensure consistent SSR/CSR styles for route transition wrapper */
+.route-transition {
+  min-height: 100vh;
+  overflow: hidden;
+  will-change: transform;
+}
