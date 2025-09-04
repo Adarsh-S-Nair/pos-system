@@ -5,7 +5,7 @@ import ThemeToggle from "./components/ThemeToggle";
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col">
-      <header className="sticky top-0 z-20 w-full border-b border-[var(--color-border)]/60 bg-[var(--color-bg)]/70 backdrop-blur supports-[backdrop-filter]:bg-[var(--color-bg)]/50">
+      <header className="sticky top-0 z-20 w-full bg-[var(--color-bg)]">
         <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-6">
           <div className="text-sm font-semibold">Crate</div>
           <nav className="hidden sm:flex" />
@@ -19,7 +19,7 @@ export default function Home() {
 
       <section className="relative isolate flex flex-1 items-center justify-center px-6 py-20">
         <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(17,24,39,0.04),transparent),radial-gradient(ellipse_at_top,rgba(17,24,39,0.06),transparent_60%)]" />
-        <div className="relative z-10 mx-auto max-w-3xl text-center animate-[fadeInUp_700ms_ease-out_1]">
+        <div className="relative z-10 mx-auto max-w-3xl text-center">
           <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1 text-xs text-[var(--color-muted)]">
             Launching new POS features
           </div>

@@ -1,10 +1,12 @@
 import Tabs from "../components/ui/Tabs";
 import LoginForm from "../components/auth/LoginForm";
 import SignupForm from "../components/auth/SignupForm";
+import BackLink from "../components/BackLink";
 
 export default function AuthPage() {
   return (
-    <main className="min-h-screen flex items-center justify-center px-6 py-16">
+    <main className="relative min-h-screen flex items-center justify-center px-6 py-16">
+      <BackLink />
       <div className="w-full max-w-md">
         <div className="mb-6 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1 text-xs text-[var(--color-muted)]">

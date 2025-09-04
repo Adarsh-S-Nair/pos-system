@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Manrope, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "./colors.css";
+import RouteTransition from "./RouteTransition";
 
 const geistSans = Manrope({
   variable: "--font-geist-sans",
@@ -27,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--color-bg)] text-[var(--color-fg)]`}>
-        {children}
+        <RouteTransition>{children}</RouteTransition>
       </body>
     </html>
   );
