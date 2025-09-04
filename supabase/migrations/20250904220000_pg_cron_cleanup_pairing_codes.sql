@@ -12,7 +12,6 @@ BEGIN
     PERFORM cron.unschedule((SELECT jobid FROM cron.job WHERE jobname = 'cleanup_pairing_codes'));
   END IF;
 END $$;
-$$
 
 -- Schedule cleanup every 15 minutes
 SELECT cron.schedule(
