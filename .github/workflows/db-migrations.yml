@@ -29,7 +29,9 @@ jobs:
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
 
       - name: Push migrations to remote
-        run: supabase db push --include-all
+        run: supabase db push --include-all -p "$SUPABASE_DB_PASSWORD"
+        env:
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
 
       # Option B (fallback): If your setup requires a DB URL/password, uncomment below and set DATABASE_URL in secrets
       # - name: Push with DB URL
