@@ -61,7 +61,7 @@ export default function StoreSetupPage() {
       if ((data?.length ?? 0) > 0) router.replace("/dashboard");
     };
     void run();
-  }, [router]);
+  }, [router, supabase]);
 
   const focusFirst = (container: HTMLDivElement | null) => {
     container?.querySelector<HTMLInputElement | HTMLSelectElement>("input,select")?.focus();
@@ -149,7 +149,7 @@ export default function StoreSetupPage() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [canContinue]);
+  }, [canContinue, onBack, onCancel, onContinue]);
 
   // Slide container styles
   const slideStyle = (index: number) => {

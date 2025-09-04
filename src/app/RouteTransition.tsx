@@ -7,7 +7,7 @@ import { useEffect, useRef } from "react";
 export default function RouteTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const first = useRef(true);
-  const prev = useRef<string | null>(null);
+  const prev = useRef<string | null>(pathname);
   const dir = useRef<1 | -1>(1);
   const isAdminRoute =
     pathname.startsWith("/dashboard") ||
@@ -20,7 +20,6 @@ export default function RouteTransition({ children }: { children: React.ReactNod
     pathname.startsWith("/staff");
   useEffect(() => {
     first.current = false;
-    prev.current = pathname;
   }, []);
 
   useEffect(() => {
