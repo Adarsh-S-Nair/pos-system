@@ -9,7 +9,7 @@ type InputProps = InputHTMLAttributes<HTMLInputElement> & {
 };
 
 const baseStyles =
-  "block rounded-md border bg-[var(--color-input-bg)] text-[var(--color-input-fg)] placeholder-[var(--color-input-placeholder)] border-[var(--color-border)] px-3 py-2 text-sm transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-[var(--color-ring)] focus:border-transparent disabled:opacity-50 disabled:pointer-events-none";
+  "block rounded-md border bg-[var(--color-input-bg)] text-[var(--color-input-fg)] placeholder-[var(--color-input-placeholder)] border-[var(--color-border)] px-3 py-2 text-sm transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-[var(--color-ring)] focus:border-transparent hover:bg-[color-mix(in_oklab,var(--color-input-bg),var(--color-fg)_4%)] disabled:opacity-50 disabled:pointer-events-none";
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className, invalid = false, fullWidth = true, ...props }, ref) => {

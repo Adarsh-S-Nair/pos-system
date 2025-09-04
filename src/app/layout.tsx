@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Manrope, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "./colors.css";
 
-const geistSans = Geist({
+const geistSans = Manrope({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  weight: ["200","300","400","500","600"],
 });
 
 const geistMono = Geist_Mono({

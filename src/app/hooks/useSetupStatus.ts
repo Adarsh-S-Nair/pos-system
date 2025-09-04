@@ -1,24 +1,38 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getLocalJSON } from "../lib/storage";
+import { supabase } from "../lib/supabaseClient";
 
-type StoreProfile = {
-  name?: string;
-  timezone?: string;
-  [key: string]: unknown;
-};
-
-// Returns whether the local store profile exists and has required fields.
+// Returns whether a store profile exists in DB for the current user.
 export function useSetupStatus() {
   const [hasStore, setHasStore] = useState<boolean>(false);
   const [checked, setChecked] = useState<boolean>(false);
 
   useEffect(() => {
-    const prof = getLocalJSON<StoreProfile>("pos.storeProfile.v1");
-    const ok = !!prof && typeof prof === "object" && !!prof.name && !!prof.timezone;
-    setHasStore(ok);
-    setChecked(true);
+    const run = async () => {
+      try {
+        const { data: userRes } = await supabase.auth.getUser();
+        const user = userRes?.user;
+        if (!user) {
+          setHasStore(false);
+          setChecked(true);
+          return;
+        }
+        // RLS restricts to owner only; selecting any row indicates presence
+        const { data, error } = await supabase
+          .from("business_profiles")
+          .select("id")
+          .limit(1);
+        if (error) {
+          setHasStore(false);
+        } else {
+          setHasStore((data?.length ?? 0) > 0);
+        }
+      } finally {
+        setChecked(true);
+      }
+    };
+    void run();
   }, []);
 
   return { hasStore, checked };

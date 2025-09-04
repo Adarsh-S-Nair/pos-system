@@ -1,13 +1,13 @@
 :root {
   --color-bg: #ffffff;
-  --color-surface: #f7f7f8;
-  --color-fg: #0f172a;
-  --color-muted: #64748b;
-  --color-border: #e5e7eb;
-  --color-ring: #93c5fd;
+  --color-surface: #f6f7f9;
+  --color-fg: #484444; /* requested text color */
+  --color-muted: #6b7280; /* gray-500 */
+  --color-border: #e5e7eb; /* gray-200 */
+  --color-ring: #a5b4fc; /* indigo-300 */
 
-  --color-primary: #0ea5e9;
-  --color-primary-hover: #0284c7;
+  --color-primary: #484444; /* requested button color */
+  --color-primary-hover: #3e3a3a;
   --color-on-primary: #ffffff;
 
   --color-accent: #22c55e;
@@ -22,15 +22,15 @@
 
 .dark {
   --color-bg: #22272e; /* required dark background */
-  --color-surface: #2b313a;
+  --color-surface: #2a3038;
   --color-fg: #e6edf3;
-  --color-muted: #9aa7b2;
-  --color-border: #3d444d;
-  --color-ring: #4493f8;
+  --color-muted: #a3afba;
+  --color-border: #39414b;
+  --color-ring: #7aa2f7;
 
-  --color-primary: #4493f8;
-  --color-primary-hover: #1f6feb;
-  --color-on-primary: #ffffff;
+  --color-primary: #e6edf3; /* light button in dark mode */
+  --color-primary-hover: #cdd6e0;
+  --color-on-primary: #484444; /* swap to dark text on light button */
 
   --color-accent: #2ea043;
   --color-accent-hover: #238636;
@@ -46,6 +46,7 @@
 html, body {
   background-color: var(--color-bg);
   color: var(--color-fg);
+  font-weight: 500; /* slightly bolder regular text */
 }
 
 /* Focus outline color harmonized across components */
