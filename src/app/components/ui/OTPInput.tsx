@@ -44,7 +44,9 @@ export default function OTPInput({ length = 6, value, onChange }: Props) {
       {Array.from({ length }).map((_, i) => (
         <input
           key={i}
-          ref={(el) => (refs.current[i] = el)}
+          ref={(el) => {
+            refs.current[i] = el;
+          }}
           inputMode="numeric"
           pattern="[0-9]*"
           maxLength={1}
