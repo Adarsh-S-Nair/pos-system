@@ -22,11 +22,14 @@ jobs:
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
 
-      # Push migrations via management API (no DB password needed)
-      - name: Push migrations to remote
-        run: supabase db push --project-ref $SUPABASE_PROJECT_REF --include-all
+      - name: Link project (uses DB password)
+        run: supabase link --project-ref $SUPABASE_PROJECT_REF --password $SUPABASE_DB_PASSWORD
         env:
           SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
+      - name: Push migrations to remote
+        run: supabase db push --include-all
 
       # Option B (fallback): If your setup requires a DB URL/password, uncomment below and set DATABASE_URL in secrets
       # - name: Push with DB URL
