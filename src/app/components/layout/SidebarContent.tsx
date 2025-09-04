@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import ThemeToggle from "../ThemeToggle";
 import Button from "../ui/Button";
+import { useStore } from "../../contexts/StoreContext";
 import { supabase } from "../../lib/supabaseClient";
 import { NAV_GROUPS } from "./nav";
 import { FaLock } from "react-icons/fa";
@@ -13,9 +14,9 @@ import { FaLock } from "react-icons/fa";
 export default function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { businessName } = useStore();
   const [displayName, setDisplayName] = useState<string>("You");
   const [profileUrl, setProfileUrl] = useState<string | null>(null);
-  const [businessName, setBusinessName] = useState<string>("");
   const [isSigningOut, setIsSigningOut] = useState<boolean>(false);
 
   useEffect(() => {
@@ -36,8 +37,6 @@ export default function SidebarContent({ onNavigate }: { onNavigate?: () => void
         setProfileUrl(p?.profile_picture_url || fallback);
       }
 
-      const { data: biz } = await supabase.from("business_profiles").select("name").limit(1).maybeSingle();
-      setBusinessName(biz?.name || "");
     };
     void load();
   }, []);

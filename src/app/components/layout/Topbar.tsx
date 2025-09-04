@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useStore } from "../../contexts/StoreContext";
 import { supabase } from "../../lib/supabaseClient";
 import { LuMenu } from "react-icons/lu";
 import { FaSearch } from "react-icons/fa";
@@ -9,7 +10,9 @@ import { Input } from "../ui/Input";
 
 export default function Topbar() {
   const pathname = usePathname();
+  const { businessName } = useStore();
   const [profileUrl, setProfileUrl] = useState<string | null>(null);
+  
   useEffect(() => {
     const load = async () => {
       const { data } = await supabase.auth.getSession();
@@ -38,8 +41,8 @@ export default function Topbar() {
     if (pathname.startsWith("/categories")) return "Categories";
     if (pathname.startsWith("/reports")) return "Reports";
     if (pathname.startsWith("/settings")) return "Settings";
-    return "Crate";
-  }, [pathname]);
+    return businessName || "Crate";
+  }, [pathname, businessName]);
 
   return (
     <header className="sticky top-0 z-20 h-16 bg-[var(--color-content-bg)]/90 backdrop-blur supports-[backdrop-filter]:bg-[color-mix(in_oklab,var(--color-content-bg),transparent_6%)]">

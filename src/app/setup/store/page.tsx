@@ -11,8 +11,7 @@ import { supabase } from "../../lib/supabaseClient";
 
 type Draft = {
   step: number;
-  basics: { name: string; timezone: string; address1?: string; city?: string; region?: string; postal?: string; currency: string };
-  taxes: { enabled: boolean; rate?: string };
+  basics: { name: string; address1?: string; city?: string; region?: string; postal?: string; currency: string };
   pins: { owner: string; manager?: string; cashier?: string };
   items: { choice?: "import" | "add" | "sample" };
 };
@@ -21,27 +20,17 @@ const DRAFT_KEY = "pos.setupDraft.v1";
 
 export default function StoreSetupPage() {
   const router = useRouter();
-  const defaultTz = useMemo(() => {
-    if (typeof window === "undefined") return "UTC";
-    try {
-      return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
-    } catch {
-      return "UTC";
-    }
-  }, []);
-
   const initialDraft: Draft = useMemo(() => {
     const saved = getLocalJSON<Draft>(DRAFT_KEY);
     return (
       saved ?? {
         step: 0,
-        basics: { name: "", timezone: defaultTz, address1: "", city: "", region: "", postal: "", currency: "USD" },
-        taxes: { enabled: false, rate: "" },
+        basics: { name: "", address1: "", city: "", region: "", postal: "", currency: "USD" },
         pins: { owner: "", manager: "", cashier: "" },
         items: { choice: undefined },
       }
     );
-  }, [defaultTz]);
+  }, []);
 
   const [draft, setDraft] = useState<Draft>(initialDraft);
   const [error, setError] = useState<string | null>(null);
@@ -75,15 +64,8 @@ export default function StoreSetupPage() {
     setError(null);
     if (draft.step === 0) {
       if (!draft.basics.name.trim()) return "Store name is required.";
-      if (!draft.basics.timezone) return "Timezone is required.";
     }
     if (draft.step === 1) {
-      if (draft.taxes.enabled) {
-        const r = Number(draft.taxes.rate);
-        if (!Number.isFinite(r) || r < 0) return "Tax rate must be a number ≥ 0.";
-      }
-    }
-    if (draft.step === 2) {
       const pinOk = (v: string | undefined, req = false) => {
         if (!v || v.length === 0) return !req;
         return /^\d{4,6}$/.test(v);
@@ -105,7 +87,7 @@ export default function StoreSetupPage() {
       slideRef.current?.querySelector<HTMLInputElement>("input[aria-invalid='true']")?.focus();
       return;
     }
-    if (draft.step < 3) {
+    if (draft.step < 2) {
       setDraft((d) => ({ ...d, step: d.step + 1 }));
     } else {
       // Final submit: write to DB (owner-only via RLS; owner_id from auth.uid())
@@ -115,7 +97,7 @@ export default function StoreSetupPage() {
         city: draft.basics.city?.trim() || null,
         region: draft.basics.region?.trim() || null,
         postal: draft.basics.postal?.trim() || null,
-        timezone: draft.basics.timezone,
+        timezone: "UTC", // Default timezone
         currency: draft.basics.currency,
       });
       if (upsertError) {
@@ -169,11 +151,11 @@ export default function StoreSetupPage() {
       <p className="mt-1 text-sm text-[var(--color-muted)]">You can change these later in Settings.</p>
       <div className="mt-4 flex items-center justify-center gap-3 text-xs text-[var(--color-muted)]">
         <div className="flex items-center gap-2">
-          {[0, 1, 2, 3].map((i) => (
+          {[0, 1, 2].map((i) => (
             <span key={i} className={`h-2 w-2 rounded-full border border-[var(--color-border)] ${draft.step === i ? "bg-[var(--color-fg)]" : "bg-[var(--color-surface)]"}`} />
           ))}
         </div>
-        <span>Step {draft.step + 1} of 4</span>
+        <span>Step {draft.step + 1} of 3</span>
       </div>
     </header>
   );
@@ -190,10 +172,6 @@ export default function StoreSetupPage() {
                 <div className="space-y-1.5">
                   <label className="text-sm">Store name<span className="ml-1 text-[var(--color-danger)]">*</span></label>
                   <Input aria-invalid={!draft.basics.name ? "true" : undefined} value={draft.basics.name} onChange={(e) => setDraft((d) => ({ ...d, basics: { ...d.basics, name: e.target.value } }))} placeholder="Crate Downtown" />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm">Timezone<span className="ml-1 text-[var(--color-danger)]">*</span></label>
-                  <Input aria-invalid={!draft.basics.timezone ? "true" : undefined} value={draft.basics.timezone} onChange={(e) => setDraft((d) => ({ ...d, basics: { ...d.basics, timezone: e.target.value } }))} placeholder="America/Los_Angeles" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm">Address (line 1)</label>
@@ -229,25 +207,8 @@ export default function StoreSetupPage() {
               </div>
             </div>
 
-            {/* Step 2: Taxes */}
+            {/* Step 2: Staff & PINs */}
             <div style={slideStyle(1)}>
-              <div className="space-y-4 px-2 md:px-4">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm">Enable taxes</label>
-                  <input className="cursor-pointer" type="checkbox" checked={draft.taxes.enabled} onChange={(e) => setDraft((d) => ({ ...d, taxes: { ...d.taxes, enabled: e.target.checked } }))} />
-                </div>
-                {draft.taxes.enabled && (
-                  <div className="space-y-1.5">
-                    <label className="text-sm">Default rate (%)</label>
-                    <Input aria-invalid={draft.taxes.enabled && (!draft.taxes.rate || Number(draft.taxes.rate) < 0) ? "true" : undefined} value={draft.taxes.rate ?? ""} onChange={(e) => setDraft((d) => ({ ...d, taxes: { ...d.taxes, rate: e.target.value } }))} placeholder="7.5" />
-                    <p className="text-xs text-[var(--color-muted)]">Applies at checkout by default. You can override per item later.</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Step 3: Staff & PINs */}
-            <div style={slideStyle(2)}>
               <div className="space-y-4 px-2 md:px-4">
                 <div className="space-y-1.5">
                   <label className="text-sm">Owner PIN<span className="ml-1 text-[var(--color-danger)]">*</span></label>
@@ -265,8 +226,8 @@ export default function StoreSetupPage() {
               </div>
             </div>
 
-            {/* Step 4: Items */}
-            <div style={slideStyle(3)}>
+            {/* Step 3: Items */}
+            <div style={slideStyle(2)}>
               <div className="space-y-4 px-2 md:px-4">
                 <p className="text-sm">How would you like to add items?</p>
                 <div className="grid gap-4 sm:grid-cols-3">
@@ -287,7 +248,7 @@ export default function StoreSetupPage() {
       <footer className="fixed inset-x-0 bottom-0 z-10 border-t border-[var(--color-border)] bg-[var(--color-bg)]/95 backdrop-blur-sm">
         <div className="mx-auto flex w-full max-w-4xl items-center justify-between px-8 py-4">
           <Button variant="secondary" onClick={onBack} disabled={draft.step === 0}>Back</Button>
-          <Button onClick={onContinue} disabled={!canContinue}>{draft.step === 3 ? "Save & Finish" : "Continue"}</Button>
+          <Button onClick={onContinue} disabled={!canContinue}>{draft.step === 2 ? "Save & Finish" : "Continue"}</Button>
         </div>
       </footer>
     </main>

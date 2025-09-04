@@ -21,7 +21,7 @@ export default function Modal({ open, onClose, title, description, size = "md", 
   const lastFocusedRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || typeof window === "undefined") return;
     lastFocusedRef.current = document.activeElement as HTMLElement | null;
     const focusable = containerRef.current?.querySelector<HTMLElement>(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
@@ -55,7 +55,7 @@ export default function Modal({ open, onClose, title, description, size = "md", 
   }, [open, onClose]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || typeof window === "undefined") return;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "";
@@ -65,6 +65,8 @@ export default function Modal({ open, onClose, title, description, size = "md", 
 
   const sizeClass = size === "sm" ? "max-w-md" : size === "lg" ? "max-w-2xl" : "max-w-lg";
 
+  if (typeof window === "undefined") return null;
+  
   return createPortal(
     <AnimatePresence>
       {open && (
