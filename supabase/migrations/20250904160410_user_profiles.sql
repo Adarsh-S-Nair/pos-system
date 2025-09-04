@@ -10,15 +10,15 @@ create table if not exists public.user_profiles (
 alter table public.user_profiles enable row level security;
 
 -- Policies: users can manage their own profile
-create policy if not exists "Users can view own profile"
+create policy "Users can view own profile"
   on public.user_profiles for select
   using (auth.uid() = user_id);
 
-create policy if not exists "Users can insert own profile"
+create policy "Users can insert own profile"
   on public.user_profiles for insert
   with check (auth.uid() = user_id);
 
-create policy if not exists "Users can update own profile"
+create policy "Users can update own profile"
   on public.user_profiles for update
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
