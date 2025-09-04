@@ -34,3 +34,21 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Supabase IaC quickstart
+
+1. Install CLI: `brew install supabase/tap/supabase` or `npx supabase@latest`
+2. One-time: `supabase init` and `supabase start` to boot local DB
+3. Apply migrations locally: `npm run db:dev:reset`
+4. Create a new migration: `npm run db:mig:new add_whatever` → edit the SQL file
+5. Generate a diff migration: `npm run db:mig:gen -- --use-pgschema public --file add_changes`
+6. Link remote project: `supabase link --project-ref <ref>`
+7. Push migrations remotely: `npm run db:mig:up:remote`
+8. CI auto-applies on push to `main` (see `.github/workflows/db-migrations.yml`)
+
+Secrets needed in GitHub:
+
+- `SUPABASE_PROJECT_REF`
+- `SUPABASE_ACCESS_TOKEN`
+- (Optional) `DATABASE_URL` if using direct PG auth
+
