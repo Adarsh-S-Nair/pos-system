@@ -24,4 +24,7 @@ SELECT cron.schedule(
   $$
 );
 
+-- Ensure cron can run with proper privileges
+GRANT USAGE ON SCHEMA public TO postgres;
+
 

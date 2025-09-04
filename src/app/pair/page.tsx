@@ -6,12 +6,13 @@ import Button from "../components/ui/Button";
 import OTPInput from "../components/ui/OTPInput";
 import BackLink from "../components/BackLink";
 import { supabase } from "../lib/supabaseClient";
+import { useToast } from "../components/ui/ToastProvider";
 
 export default function PairPage() {
   const router = useRouter();
   const [pin, setPin] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
+  const { setToast } = useToast();
   const valid = pin.length === 6;
 
   const normalized = useMemo(() => pin.toUpperCase(), [pin]);
@@ -19,30 +20,22 @@ export default function PairPage() {
   const submit = useCallback(async (code: string) => {
     if (submitting) return;
     setSubmitting(true);
-    setError("");
+    console.debug("[pair] submit called", { code });
     try {
-      // Check pairing_codes validity: not expired, not claimed
-      const { data, error: err } = await supabase
-        .from("pairing_codes")
-        .select("id, expires_at")
-        .eq("code", code)
-        .is("claimed_at", null)
-        .limit(1)
-        .maybeSingle();
+      // Server-side validation to bypass RLS via SECURITY DEFINER function
+      const { data, error: err } = await supabase.rpc("verify_pairing_code", { p_code: code });
+      console.debug("[pair] verify_pairing_code result", { data, err });
       if (err) throw err;
-      if (!data) {
-        setError("Invalid or expired code. Try again.");
-        return;
-      }
-      const exp = new Date(data.expires_at).getTime();
-      if (Date.now() > exp) {
-        setError("Code expired. Generate a new one.");
+      const row = Array.isArray(data) ? data[0] : data;
+      if (!row) {
+        setToast({ title: "Invalid or expired code", description: "Try again.", variant: "error" });
         return;
       }
       // Success: navigate to temporary authenticated page
       router.push("/pair/success");
     } catch (e) {
-      setError("Unable to verify code. Please try again.");
+      console.debug("[pair] verification error", e);
+      setToast({ title: "Unable to verify code", description: "Please try again.", variant: "error" });
     } finally {
       setSubmitting(false);
     }
@@ -57,13 +50,12 @@ export default function PairPage() {
         <div className="mt-6">
           <OTPInput 
             value={pin} 
-            onChange={(v) => { setPin(v); setError(""); }} 
+            onChange={(v) => { setPin(v); }} 
             onComplete={(v) => submit(v.toUpperCase())}
             length={6} 
             mode="alphanumeric" 
             uppercase 
           />
-          {error ? <p className="mt-3 text-sm text-[var(--color-warn)]">{error}</p> : null}
           <Button className="mt-6 w-full" disabled={!valid || submitting} onClick={() => submit(normalized)}>
             Pair
           </Button>
