@@ -9,6 +9,15 @@ export default function RouteTransition({ children }: { children: React.ReactNod
   const first = useRef(true);
   const prev = useRef<string | null>(null);
   const dir = useRef<1 | -1>(1);
+  const isAdminRoute =
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/devices") ||
+    pathname.startsWith("/transactions") ||
+    pathname.startsWith("/items") ||
+    pathname.startsWith("/categories") ||
+    pathname.startsWith("/reports") ||
+    pathname.startsWith("/settings") ||
+    pathname.startsWith("/staff");
   useEffect(() => {
     first.current = false;
     prev.current = pathname;
@@ -21,6 +30,14 @@ export default function RouteTransition({ children }: { children: React.ReactNod
     }
     prev.current = pathname;
   }, [pathname]);
+
+  if (isAdminRoute) {
+    return (
+      <div className="route-transition" suppressHydrationWarning={true as unknown as undefined}>
+        {children}
+      </div>
+    );
+  }
 
   return (
     <motion.div

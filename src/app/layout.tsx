@@ -3,6 +3,7 @@ import { Manrope, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "./colors.css";
 import RouteTransition from "./RouteTransition";
+import ToastProvider from "./components/ui/ToastProvider";
 
 const geistSans = Manrope({
   variable: "--font-geist-sans",
@@ -28,7 +29,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--color-bg)] text-[var(--color-fg)]`}>
-        <RouteTransition>{children}</RouteTransition>
+        <ToastProvider>
+          <RouteTransition>{children}</RouteTransition>
+        </ToastProvider>
       </body>
     </html>
   );

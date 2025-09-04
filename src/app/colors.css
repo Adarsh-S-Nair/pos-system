@@ -12,12 +12,20 @@
 
   --color-accent: #22c55e;
   --color-accent-hover: #16a34a;
+  --color-on-accent: #ffffff;
 
   --color-danger: #ef4444;
+  --color-on-danger: #ffffff;
+
+  --color-warn: #f97316; /* orange-500 */
+  --color-on-warn: #ffffff;
 
   --color-input-bg: #ffffff;
   --color-input-fg: #0f172a;
   --color-input-placeholder: #94a3b8;
+
+  /* Subtle content background distinct from base bg */
+  --color-content-bg: #f7f8fa;
 }
 
 .dark {
@@ -34,12 +42,20 @@
 
   --color-accent: #2ea043;
   --color-accent-hover: #238636;
+  --color-on-accent: #ffffff;
 
   --color-danger: #f85149;
+  --color-on-danger: #0b1214; /* dark text on light danger in dark mode */
+
+  --color-warn: #f08722; /* deeper orange for dark theme */
+  --color-on-warn: #ffffff;
 
   --color-input-bg: #2b313a;
   --color-input-fg: #e6edf3;
   --color-input-placeholder: #9aa7b2;
+
+  /* Subtle content background distinct from base bg */
+  --color-content-bg: #262c34;
 }
 
 /* Base application colors */
@@ -47,6 +63,10 @@ html, body {
   background-color: var(--color-bg);
   color: var(--color-fg);
   font-weight: 500; /* slightly bolder regular text */
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-width: 100%;
 }
 
 /* Focus outline color harmonized across components */

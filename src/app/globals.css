@@ -8,7 +8,6 @@
 /* Prevent scrollbar flicker during route transitions */
 html {
   overflow-x: hidden;
-  scrollbar-gutter: stable both-edges;
 }
 
 body {
@@ -21,4 +20,10 @@ body {
   min-height: 100vh;
   overflow: hidden;
   will-change: transform;
+}
+
+/* Toast progress bar animation */
+@keyframes toastProgress {
+  from { width: 100%; }
+  to { width: 0%; }
 }
